@@ -9,15 +9,22 @@ import subprocess
 
 distro = 'fedora'
 
-def list_all_repos():
-    subprocess.run(['dnf', 'repolist'], stdout=subprocess.PIPE).stdout.decode('utf-8')#remiove pipe and see
+repositories = ''
+gpg_keys = {'OFFICIAL':[], 'UNOFFICIAL':[]}
 
-def list_all_gpg():
-    print('OFFICIAL')
-    subprocess.run(['ls', '/etc/pki/rpm-gpg/'], stdout=subprocess.PIPE).stdout.decode('utf-8')
-    print('UNOFFICIAL')
-    subprocess.run(["rpm", "-q", "gpg-pubkey", "--qf", "'%{NAME}-%{VERSION}-%{RELEASE}\t%{SUMMARY}\n'"], stdout=subprocess.PIPE).stdout.decode('utf-8')
+def list_all_repos():
+    global repositories
+    repositories = subprocess.run(['dnf', 'repolist'], stdout=subprocess.PIPE).stdout.decode('utf-8')#remiove pipe and see
+    print(repositories)
     
+def list_all_gpg():
+    gpg_keys['OFFICIAL'] = subprocess.run(['ls', '/etc/pki/rpm-gpg/'], stdout=subprocess.PIPE).stdout.decode('utf-8')
+    gpg_keys['UNOFFICIAL'] = subprocess.run(["rpm", "-q", "gpg-pubkey", "--qf", "'%{NAME}-%{VERSION}-%{RELEASE}\t%{SUMMARY}\n'"], stdout=subprocess.PIPE).stdout.decode('utf-8')
+    
+    print('OFFICIAL')
+    print(gpg_keys['OFFICIAL'])
+    print('UNOFFICIAL')
+    print(gpg_keys['UNOFFICIAL'])
 
 def delete_gpg(gpgkey):
     subprocess.run(['rpm', '-e', gpgkey], stdout=subprocess.PIPE).stdout.decode('utf-8')
