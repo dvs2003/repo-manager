@@ -14,31 +14,48 @@ delete repo rm -f /etc/yum.repos.d/<name-of-repository-file>
 
 now for ubuntu, arch, gentoo PaIn
 """
+#reload
 
-import subprocess
 
-distro = 'fedora'
 
-def list_all_repos():
-    subprocess.run(['dnf', 'repolist'], stdout=subprocess.PIPE).stdout.decode('utf-8')
 
-def list_all_gpg():
-    print('OFFICIAL')
-    subprocess.run(['ls', '/etc/pki/rpm-gpg/'], stdout=subprocess.PIPE).stdout.decode('utf-8')
-    print('UNOFFICIAL')
-    subprocess.run(["rpm", "-q", "gpg-pubkey", "--qf", "'%{NAME}-%{VERSION}-%{RELEASE}\t%{SUMMARY}\n'"], stdout=subprocess.PIPE).stdout.decode('utf-8')
-    
+import gi
+gi.require_version('Gtk', '3.0')
+from gi.repository import Gtk
 
-def delete_gpg(gpgkey):
-    subprocess.run(['rpm', '-e', gpgkey], stdout=subprocess.PIPE).stdout.decode('utf-8')
-    
-def enable_repo(repo):
-    subprocess.run(['rpm', 'config-manager', '--set-enabled', repo], stdout=subprocess.PIPE).stdout.decode('utf-8')
-    
-def disable_repo(repo):
-    subprocess.run(['rpm', 'config-manager', '--set-disabled', repo], stdout=subprocess.PIPE).stdout.decode('utf-8')
+class MyWindow(Gtk.Window):
 
-def delete_repo(repo):
-    subprocess.run(['rm', '-f', '/etc/yum.repos.d/', repo], stdout=subprocess.PIPE).stdout.decode('utf-8')
+    def __init__(self):
+        super().__init__()
+
+        self.init_ui()
+
+
+    def init_ui(self):
+
+        grid = Gtk.Grid()
+        self.add(grid)
+
+        quitBtn = Gtk.Button(label="Quit")
+        quitBtn.set_size_request(80, 30)
+        quitBtn.connect("clicked", self.on_button_clicked)
+
+        grid.attach(quitBtn, 0, 0, 1, 1)
+
+        self.set_border_width(10)
+        self.set_title("Quit button")
+        self.set_default_size(280, 180)
+        self.connect("destroy", Gtk.main_quit)
+
+    def on_button_clicked(self, widget):
+        Gtk.main_quit()
+
+win = MyWindow()
+win.show_all()
+Gtk.main()
+
+
+
+
 #if rpm can be replaced with deb and stuff
 #CHECK THE DISTRO
