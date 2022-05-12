@@ -57,7 +57,16 @@ def disable_repo(repo):
 
 def delete_repo(repo):
     subprocess.run(['rm', '-f', '/etc/yum.repos.d/', repositories[ids[repo]]], stdout=subprocess.PIPE).stdout.decode('utf-8')
-    
+
+#conversion to some form of OOP
+
+class gpg_keys():
+    def __init__(self):
+        pass
+
+class repos():
+    def __init__(self):
+        pass
 list_all_repos()
 """
 find the longest repo id
